@@ -8,4 +8,9 @@ class ApiEndpoints {
 
 //   ================= TODO ENDPOINT ====================
 static const String todos = '/todo';
+
+
+//  ================== Category Endpoint ================
+
+static const String categories = '/category';
 }

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:todo/features/todo/todo_form/todo_form_page.dart';
 import 'package:todo/features/todo/todo_list/todo_list_controller.dart';
 
 class TodoListPage extends StatefulWidget{
@@ -51,6 +52,22 @@ class _TodoListPageState extends State<TodoListPage> {
           ? const Center(child: CircularProgressIndicator())
           : _controller.todos.isEmpty ? _buildEmptyState()
           : _buildTodoList(),
+
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        onPressed: () async{
+          final isChanged = await Navigator.push(
+            context,
+          MaterialPageRoute(builder: (context) => const TodoFormPage())
+          );
+
+          if(isChanged == true){
+            _fetchData();
+          }
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 

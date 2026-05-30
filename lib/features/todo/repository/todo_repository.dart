@@ -6,6 +6,7 @@ import 'package:todo/features/todo/model/todo_model.dart';
 class TodoRepository {
   final DioClient _dioClient = DioClient();
 
+  // Fetch List
   Future<List<TodoModel>> fetchAllTodos() async {
     try {
       final response = await _dioClient.dio.get(ApiEndpoints.todos);
@@ -21,6 +22,32 @@ class TodoRepository {
       throw Exception(
         e.response?.data['message'] ?? 'Terjadi kesalahan jaringan',
       );
+    } // DioException
+  } //Future Fetch
+  
+  Future<bool> createTodo({
+    required String title,
+    required String description,
+    required DateTime dueDate,
+    required int categoryId,
+  }) async {
+    try {
+      final response = await _dioClient.dio.post(
+        ApiEndpoints.todos,
+        data: {
+          'title': title,
+          'description': description,
+          'due_date': dueDate,
+          'category': categoryId,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'gagal menambah todo');
     }
-  }
-}
+  } //future Create
+} //TodoRepository
