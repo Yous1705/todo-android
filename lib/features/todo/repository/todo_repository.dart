@@ -24,7 +24,7 @@ class TodoRepository {
       );
     } // DioException
   } //Future Fetch
-  
+
   Future<bool> createTodo({
     required String title,
     required String description,
@@ -37,7 +37,7 @@ class TodoRepository {
         data: {
           'title': title,
           'description': description,
-          'due_date': dueDate,
+          'due_date': dueDate.toUtc().toIso8601String(),
           'category': categoryId,
         },
       );
@@ -47,7 +47,7 @@ class TodoRepository {
       }
       return false;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'gagal menambah todo');
+      throw Exception(e.response?.data['message'] ?? 'Failed to create todo');
     }
   } //future Create
 } //TodoRepository

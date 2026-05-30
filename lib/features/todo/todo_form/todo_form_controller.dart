@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:todo/features/todo/model/category_model.dart';
+import 'package:todo/features/todo/repository/category_repository.dart';
 import 'package:todo/features/todo/repository/todo_repository.dart';
 
 class TodoFormController extends ChangeNotifier {
   final TodoRepository _todoRepository = TodoRepository();
+  final CategoryRepository _categoryRepository = CategoryRepository();
 
   final formKey = GlobalKey<FormState>();
 
@@ -12,9 +14,26 @@ class TodoFormController extends ChangeNotifier {
   DateTime? selectedDueDate;
   CategoryModel? selectedCategory;
 
+  List<CategoryModel> categories = [];
   bool isLoading = false;
+  bool isLoadingCategories = false;
+
+  Future<void> loadCategories({required VoidCallback onRefreshUI}) async {
+    isLoadingCategories = true;
+    onRefreshUI();
+
+    try {
+      categories = await _categoryRepository.fetchAllCategories();
+    } catch (e) {
+      print('Error load category: $e');
+    } finally {
+      isLoadingCategories = false;
+      onRefreshUI();
+    }
+  }
 
   Future<void> submitTodo({
+    required VoidCallback onRefreshUI,
     required VoidCallback onSuccess,
     required Function(String) onError,
   }) async {
@@ -31,7 +50,7 @@ class TodoFormController extends ChangeNotifier {
     }
 
     isLoading = true;
-    notifyListeners();
+    onRefreshUI();
 
     try {
       final isSuccess = await _todoRepository.createTodo(
@@ -48,7 +67,7 @@ class TodoFormController extends ChangeNotifier {
       onError(e.toString().replaceAll('Exception', ''));
     } finally {
       isLoading = false;
-      notifyListeners();
+      onRefreshUI();
     }
   }
 
